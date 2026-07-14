@@ -31,12 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = urlInput.value.trim();
         
         if (!url) {
-            showError("Silakan masukkan URL Instagram.");
+            showError("Silakan masukkan URL Instagram atau YouTube.");
             return;
         }
 
-        if (!url.includes('instagram.com')) {
-            showError("URL tidak valid. Pastikan itu link Instagram.");
+        const isInstagram = url.includes('instagram.com');
+        const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+
+        if (!isInstagram && !isYouTube) {
+            showError("URL tidak valid. Pastikan itu link Instagram atau YouTube.");
             return;
         }
 
