@@ -6,10 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorText = document.getElementById('error-text');
     const resultContainer = document.getElementById('result-container');
     const mediaList = document.getElementById('media-list');
+    const clearBtn = document.getElementById('clear-btn');
 
     downloadBtn.addEventListener('click', processUrl);
     urlInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') processUrl();
+    });
+
+    urlInput.addEventListener('input', () => {
+        if (urlInput.value.length > 0) {
+            clearBtn.classList.remove('hidden');
+        } else {
+            clearBtn.classList.add('hidden');
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        urlInput.value = '';
+        clearBtn.classList.add('hidden');
+        urlInput.focus();
     });
 
     async function processUrl() {
@@ -35,25 +50,26 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
 
         try {
-            // Simulasi network delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const response = await fetch('/api/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url })
+            });
 
-            // Karena Instagram memblokir request publik (termasuk Cobalt API), 
-            // kita menggunakan mock data untuk demonstrasi UI.
-            // Untuk production, ganti dengan fetch ke endpoint API berbayar Anda (misal RapidAPI).
-            
-            const data = {
-                status: 'redirect',
-                // Dummy video url (sample)
-                url: 'https://www.w3schools.com/html/mov_bbb.mp4'
-            };
-
-            // Jika URL spesifik yang diminta user untuk dites
-            if (url.includes('DZ58ItASnLi')) {
-                console.log('Testing specific URL dari user');
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.message || 'API merespons dengan error.');
             }
 
-            displayResult(data);
+            const data = await response.json();
+
+            if (data.status === 'error') {
+                throw new Error(data.message || "Terjadi kesalahan pada server pencari.");
+            }
+
+            displayResult(data.data);
 
         } catch (error) {
             console.error('Error fetching media:', error);
@@ -69,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle single video/photo
         if (data.status === 'redirect' || data.status === 'stream') {
-            createMediaCard(data.url);
+            createMediaCard(data.url, data.thumbnail);
         } 
         // Handle carousel (multiple items)
         else if (data.status === 'picker') {
@@ -84,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         card.className = 'media-card';
 
         // Check if video or image by url extension or fallback
-        const isVideo = url.includes('.mp4') || (thumbUrl !== null);
+        // Karena rapidcdn app url mungkin tidak berakhiran .mp4, 
+        // kita andalkan ketersediaan thumbnail atau link format mp4 untuk deteksi video.
+        const isVideo = url.includes('.mp4') || (thumbUrl !== null && thumbUrl !== undefined);
         
         if (isVideo) {
             const video = document.createElement('video');
@@ -96,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const img = document.createElement('img');
             img.className = 'media-preview';
-            img.src = url;
+            img.src = thumbUrl || url; // Jika thumbnail ada maka gunakan, jika tidak pakai sumber URL utama
             img.alt = 'Instagram Media';
             card.appendChild(img);
         }

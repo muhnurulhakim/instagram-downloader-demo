@@ -45,9 +45,16 @@ header p {
     margin-bottom: 25px;
 }
 
+.input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+}
+
 input[type="url"] {
     width: 100%;
     padding: 15px;
+    padding-right: 40px;
     font-size: 16px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -58,6 +65,33 @@ input[type="url"] {
 
 input[type="url"]:focus {
     border-color: #007aff;
+}
+
+#clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 24px;
+    font-weight: 500;
+    padding: 0;
+    width: auto;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+#clear-btn:hover {
+    color: #333;
+    background: transparent;
+    transform: translateY(-50%); /* prevent global button active scale */
+}
+
+#clear-btn:active {
+    transform: translateY(-50%) scale(0.9);
 }
 
 button {

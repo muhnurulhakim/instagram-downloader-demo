@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@hono/node-server": "^2.0.8",
+    "btch-downloader": "^6.0.37",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.30",
+    "instagram-url-direct": "^2.0.7"
+  },
+  "name": "download-instagram-reels",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muhnurulhakim/instagram-downloader-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/muhnurulhakim/instagram-downloader-demo/issues"
+  },
+  "homepage": "https://github.com/muhnurulhakim/instagram-downloader-demo#readme"
+}
