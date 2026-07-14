@@ -83,16 +83,66 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayResult(data) {
         resultContainer.classList.remove('hidden');
 
-        // Handle single video/photo
-        if (data.status === 'redirect' || data.status === 'stream') {
-            createMediaCard(data.url, data.thumbnail);
-        } 
-        // Handle carousel (multiple items)
-        else if (data.status === 'picker') {
-            data.picker.forEach(item => {
-                createMediaCard(item.url, item.thumb);
-            });
+        if (data.platform === 'youtube') {
+            createYouTubeCard(data);
+        } else {
+            // Handle single video/photo
+            if (data.status === 'redirect' || data.status === 'stream') {
+                createMediaCard(data.url, data.thumbnail);
+            } 
+            // Handle carousel (multiple items)
+            else if (data.status === 'picker') {
+                data.picker.forEach(item => {
+                    createMediaCard(item.url, item.thumb);
+                });
+            }
         }
+    }
+
+    function createYouTubeCard(data) {
+        const card = document.createElement('div');
+        card.className = 'media-card yt-card';
+
+        const img = document.createElement('img');
+        img.className = 'media-preview';
+        img.src = data.thumbnail;
+        img.alt = data.title;
+        card.appendChild(img);
+
+        const title = document.createElement('h3');
+        title.textContent = data.title;
+        title.style.margin = '10px 0';
+        title.style.fontSize = '1.1rem';
+        card.appendChild(title);
+
+        const actions = document.createElement('div');
+        actions.className = 'yt-actions';
+        actions.style.display = 'flex';
+        actions.style.gap = '10px';
+        actions.style.justifyContent = 'center';
+        actions.style.flexWrap = 'wrap';
+
+        if (data.mp4) {
+            const btnMp4 = document.createElement('a');
+            btnMp4.className = 'download-link';
+            btnMp4.href = data.mp4;
+            btnMp4.target = '_blank';
+            btnMp4.textContent = 'Unduh Video (MP4)';
+            actions.appendChild(btnMp4);
+        }
+
+        if (data.mp3) {
+            const btnMp3 = document.createElement('a');
+            btnMp3.className = 'download-link';
+            btnMp3.href = data.mp3;
+            btnMp3.target = '_blank';
+            btnMp3.textContent = 'Unduh Audio (MP3)';
+            btnMp3.style.background = '#10b981'; // Green color for audio
+            actions.appendChild(btnMp3);
+        }
+
+        card.appendChild(actions);
+        mediaList.appendChild(card);
     }
 
     function createMediaCard(url, thumbUrl = null) {
